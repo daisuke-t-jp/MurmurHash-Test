@@ -10,13 +10,12 @@
 
 #include "MurmurHash3.h"
 
-void murmur_x86_32_test();
-void murmur_x86_128_test();
-void murmur_x64_128_test();
-
 uint32_t murmur_x86_32(const char *p, uint32_t seed);
 void murmur_x86_128(const char *p, uint32_t seed, uint32_t *out);
 void murmur_x64_128(const char *p, uint32_t seed, uint64_t *out);
+void murmur_x86_32_test();
+void murmur_x86_128_test();
+void murmur_x64_128_test();
 
 int main(int argc, const char * argv[]) {
 	// insert code here...
@@ -108,6 +107,26 @@ const char * keyArray[] = {
 	"メロスは激怒した。必ず、かの邪智暴虐の王を除かなければならぬと決意した。",
 };
 
+uint32_t murmur_x86_32(const char *p, uint32_t seed)
+{
+	uint32_t out;
+	MurmurHash3_x86_32((void*)p, (int)strlen(p), seed, &out);
+	
+	return out;
+}
+
+void murmur_x86_128(const char *p, uint32_t seed, uint32_t *out)
+{
+	MurmurHash3_x86_128((void*)p, (int)strlen(p), seed, out);
+}
+
+void murmur_x64_128(const char *p, uint32_t seed, uint64_t *out)
+{
+	MurmurHash3_x64_128((void*)p, (int)strlen(p), seed, out);
+}
+
+
+
 void murmur_x86_32_test()
 {
 	for(int i = 0; i < sizeof(keyArray) / sizeof(keyArray[0]); i++)
@@ -155,22 +174,4 @@ void murmur_x64_128_test()
 		murmur_x64_128(keyArray[i], 0x7FFFFFFF, out);
 		std::cout << "test_x64_128_unit(\"" << keyArray[i] << "\", hash: \"0x" << std::hex << out[0] << std::hex << out[1] << "\", seed: 0x" << std::hex << 0x7FFFFFFF << ")" << std::endl;
 	}
-}
-
-uint32_t murmur_x86_32(const char *p, uint32_t seed)
-{
-	uint32_t out;
-	MurmurHash3_x86_32((void*)p, (int)strlen(p), seed, &out);
-	
-	return out;
-}
-
-void murmur_x86_128(const char *p, uint32_t seed, uint32_t *out)
-{
-	MurmurHash3_x86_128((void*)p, (int)strlen(p), seed, out);
-}
-
-void murmur_x64_128(const char *p, uint32_t seed, uint64_t *out)
-{
-	MurmurHash3_x64_128((void*)p, (int)strlen(p), seed, out);
 }
