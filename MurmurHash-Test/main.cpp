@@ -17,6 +17,11 @@ static void murmur_x64_128(const char *p, uint32_t seed, uint64_t *out);
 static void murmur_x86_32_test();
 static void murmur_x86_128_test();
 static void murmur_x64_128_test();
+static void murmur_x86_32_file();
+static void murmur_x86_128_file();
+static void murmur_x64_128_file();
+
+
 
 int main(int argc, const char * argv[]) {
 	// insert code here...
@@ -24,7 +29,10 @@ int main(int argc, const char * argv[]) {
 	murmur_x86_32_test();
 	murmur_x86_128_test();
 	murmur_x64_128_test();
-	
+	murmur_x86_32_file();
+	murmur_x86_128_file();
+	murmur_x64_128_file();
+
 	return 0;
 }
 
@@ -177,3 +185,95 @@ static void murmur_x64_128_test()
 	}
 }
 
+static void murmur_x86_32_file()
+{
+	std::fstream stream;
+	
+	stream.open("alice29.txt", std::ios::in);
+	if(!stream.is_open())
+	{
+		std::cout <<  "file open error" << std::endl;
+		return;
+	}
+	
+	char *buf = new char[stream.tellg()]();
+	stream.read(buf, sizeof(buf));
+	
+	uint32_t out = 0;
+	out = murmur_x86_32(buf, 0);
+	std::cout << "murmur_x86_32_file -> 0x" << std::hex << out << std::endl;
+	out = murmur_x86_32(buf, 0x7fffffff);
+	std::cout << "murmur_x86_32_file(seed:0x7fffffff) -> 0x" << std::hex << out << std::endl;
+
+	delete []buf;
+	stream.close();
+}
+
+static void murmur_x86_128_file()
+{
+	std::fstream stream;
+	
+	stream.open("alice29.txt", std::ios::in);
+	if(!stream.is_open())
+	{
+		std::cout <<  "file open error" << std::endl;
+		return;
+	}
+	
+	char *buf = new char[stream.tellg()]();
+	stream.read(buf, sizeof(buf));
+	
+	uint32_t out[4];
+	murmur_x86_128(buf, 0, out);
+	std::cout << "murmur_x86_128 ->" << std::endl;
+	std::cout << "    0x" << out[0] << std::endl;
+	std::cout << "    0x" << out[1] << std::endl;
+	std::cout << "    0x" << out[2] << std::endl;
+	std::cout << "    0x" << out[3] << std::endl;
+
+	murmur_x86_128(buf, 0x7fffffff, out);
+	std::cout << "murmur_x86_128(seed:0x7fffffff) ->" << std::endl;
+	std::cout << "    0x" << out[0] << std::endl;
+	std::cout << "    0x" << out[1] << std::endl;
+	std::cout << "    0x" << out[2] << std::endl;
+	std::cout << "    0x" << out[3] << std::endl;
+	
+
+	delete []buf;
+	stream.close();
+}
+
+
+static void murmur_x64_128_file()
+{
+	std::fstream stream;
+	
+	stream.open("alice29.txt", std::ios::in);
+	if(!stream.is_open())
+	{
+		std::cout <<  "file open error" << std::endl;
+		return;
+	}
+	
+	char *buf = new char[stream.tellg()]();
+	stream.read(buf, sizeof(buf));
+	
+	uint64_t out[4];
+	murmur_x64_128(buf, 0, out);
+	std::cout << "murmur_x64_128 ->" << std::endl;
+	std::cout << "    0x" << out[0] << std::endl;
+	std::cout << "    0x" << out[1] << std::endl;
+	std::cout << "    0x" << out[2] << std::endl;
+	std::cout << "    0x" << out[3] << std::endl;
+	
+	murmur_x64_128(buf, 0x7fffffff, out);
+	std::cout << "murmur_x64_128(seed:0x7fffffff) ->" << std::endl;
+	std::cout << "    0x" << out[0] << std::endl;
+	std::cout << "    0x" << out[1] << std::endl;
+	std::cout << "    0x" << out[2] << std::endl;
+	std::cout << "    0x" << out[3] << std::endl;
+	
+	
+	delete []buf;
+	stream.close();
+}
