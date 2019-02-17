@@ -181,14 +181,14 @@ static void murmur_x64_128_test()
 {
 	for(int i = 0; i < sizeof(keyArray) / sizeof(keyArray[0]); i++)
 	{
-		uint64_t out[4];
+		uint64_t out[2];
 		murmur_x64_128(keyArray[i], 0, out);
 		std::cout << "test_x64_128_unit(\"" << keyArray[i] << "\", hash: \"0x" << std::hex << out[0] << std::hex << out[1] << "\")" << std::endl;
 	}
 
 	for(int i = 0; i < sizeof(keyArray) / sizeof(keyArray[0]); i++)
 	{
-		uint64_t out[4];
+		uint64_t out[2];
 		murmur_x64_128(keyArray[i], 0x7FFFFFFF, out);
 		std::cout << "test_x64_128_unit(\"" << keyArray[i] << "\", hash: \"0x" << std::hex << out[0] << std::hex << out[1] << "\", seed: 0x" << std::hex << 0x7FFFFFFF << ")" << std::endl;
 	}
@@ -275,15 +275,11 @@ static void murmur_x64_128_file()
 	std::cout << "murmur_x64_128 ->" << std::endl;
 	std::cout << "    0x" << out[0] << std::endl;
 	std::cout << "    0x" << out[1] << std::endl;
-	std::cout << "    0x" << out[2] << std::endl;
-	std::cout << "    0x" << out[3] << std::endl;
 	
 	murmur_x64_128(buf, 0x7fffffff, out);
 	std::cout << "murmur_x64_128(seed:0x7fffffff) ->" << std::endl;
 	std::cout << "    0x" << out[0] << std::endl;
 	std::cout << "    0x" << out[1] << std::endl;
-	std::cout << "    0x" << out[2] << std::endl;
-	std::cout << "    0x" << out[3] << std::endl;
 	
 	
 	delete []buf;
