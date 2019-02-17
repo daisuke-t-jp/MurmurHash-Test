@@ -11,6 +11,7 @@
 
 #include "MurmurHash3.h"
 
+static int getfilesize(const char *filename);
 static uint32_t murmur_x86_32(const char *p, uint32_t seed);
 static void murmur_x86_128(const char *p, uint32_t seed, uint32_t *out);
 static void murmur_x64_128(const char *p, uint32_t seed, uint64_t *out);
@@ -116,6 +117,12 @@ static const char * keyArray[] = {
 	"メロスは激怒した。必ず、かの邪智暴虐の王を除かなければならぬと決意した。",
 };
 
+static int getfilesize(const char *filename)
+{
+	std::ifstream stream(filename, std::ifstream::ate | std::ifstream::binary);
+	return (int)stream.tellg();
+}
+
 static uint32_t murmur_x86_32(const char *p, uint32_t seed)
 {
 	uint32_t out;
@@ -196,7 +203,8 @@ static void murmur_x86_32_file()
 		return;
 	}
 	
-	char *buf = new char[stream.tellg()]();
+	int filesize = getfilesize("alice29.txt");
+	char *buf = new char[filesize]();
 	stream.read(buf, sizeof(buf));
 	
 	uint32_t out = 0;
@@ -220,7 +228,8 @@ static void murmur_x86_128_file()
 		return;
 	}
 	
-	char *buf = new char[stream.tellg()]();
+	int filesize = getfilesize("alice29.txt");
+	char *buf = new char[filesize]();
 	stream.read(buf, sizeof(buf));
 	
 	uint32_t out[4];
@@ -255,7 +264,8 @@ static void murmur_x64_128_file()
 		return;
 	}
 	
-	char *buf = new char[stream.tellg()]();
+	int filesize = getfilesize("alice29.txt");
+	char *buf = new char[filesize]();
 	stream.read(buf, sizeof(buf));
 	
 	uint64_t out[4];
