@@ -12,9 +12,9 @@
 #include "MurmurHash3.h"
 
 static int getfilesize(const char *filename);
-static uint32_t murmur_x86_32(const char *p, uint32_t seed);
-static void murmur_x86_128(const char *p, uint32_t seed, uint32_t *out);
-static void murmur_x64_128(const char *p, uint32_t seed, uint64_t *out);
+static uint32_t murmur_x86_32(const char *p, uint32_t seed, int len = 0);
+static void murmur_x86_128(const char *p, uint32_t seed, uint32_t *outint , int len = 0);
+static void murmur_x64_128(const char *p, uint32_t seed, uint64_t *outint , int len = 0);
 static void murmur_x86_32_test();
 static void murmur_x86_128_test();
 static void murmur_x64_128_test();
@@ -120,25 +120,27 @@ static const char * keyArray[] = {
 static int getfilesize(const char *filename)
 {
 	std::ifstream stream(filename, std::ifstream::ate | std::ifstream::binary);
-	return (int)stream.tellg();
+	int len = (int)stream.tellg();
+	stream.close();
+	return len;
 }
 
-static uint32_t murmur_x86_32(const char *p, uint32_t seed)
+static uint32_t murmur_x86_32(const char *p, uint32_t seed, int len)
 {
 	uint32_t out;
-	MurmurHash3_x86_32((void*)p, (int)strlen(p), seed, &out);
+	MurmurHash3_x86_32((void*)p, len == 0 ? (int)strlen(p) : len, seed, &out);
 	
 	return out;
 }
 
-static void murmur_x86_128(const char *p, uint32_t seed, uint32_t *out)
+static void murmur_x86_128(const char *p, uint32_t seed, uint32_t *out, int len)
 {
-	MurmurHash3_x86_128((void*)p, (int)strlen(p), seed, out);
+	MurmurHash3_x86_128((void*)p, len == 0 ? (int)strlen(p) : len, seed, out);
 }
 
-static void murmur_x64_128(const char *p, uint32_t seed, uint64_t *out)
+static void murmur_x64_128(const char *p, uint32_t seed, uint64_t *out, int len)
 {
-	MurmurHash3_x64_128((void*)p, (int)strlen(p), seed, out);
+	MurmurHash3_x64_128((void*)p, len == 0 ? (int)strlen(p) : len, seed, out);
 }
 
 
@@ -205,12 +207,12 @@ static void murmur_x86_32_file()
 	
 	int filesize = getfilesize("alice29.txt");
 	char *buf = new char[filesize]();
-	stream.read(buf, sizeof(buf));
+	stream.read(buf, sizeof(char) * filesize);
 	
 	uint32_t out = 0;
-	out = murmur_x86_32(buf, 0);
+	out = murmur_x86_32(buf, 0, filesize);
 	std::cout << "murmur_x86_32_file -> 0x" << std::hex << out << std::endl;
-	out = murmur_x86_32(buf, 0x7fffffff);
+	out = murmur_x86_32(buf, 0x7fffffff, filesize);
 	std::cout << "murmur_x86_32_file(seed:0x7fffffff) -> 0x" << std::hex << out << std::endl;
 
 	delete []buf;
@@ -230,8 +232,8 @@ static void murmur_x86_128_file()
 	
 	int filesize = getfilesize("alice29.txt");
 	char *buf = new char[filesize]();
-	stream.read(buf, sizeof(buf));
-	
+	stream.read(buf, sizeof(char) * filesize);
+
 	uint32_t out[4];
 	murmur_x86_128(buf, 0, out);
 	std::cout << "murmur_x86_128 ->" << std::endl;
@@ -266,8 +268,8 @@ static void murmur_x64_128_file()
 	
 	int filesize = getfilesize("alice29.txt");
 	char *buf = new char[filesize]();
-	stream.read(buf, sizeof(buf));
-	
+	stream.read(buf, sizeof(char) * filesize);
+
 	uint64_t out[4];
 	murmur_x64_128(buf, 0, out);
 	std::cout << "murmur_x64_128 ->" << std::endl;
